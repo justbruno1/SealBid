@@ -1,0 +1,19 @@
+{
+  "name": "sealbid",
+  "version": "1.0.0",
+  "description": "Blind auction house on Arc Network",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.js --network arcTestnet",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network hardhat",
+    "verify": "npx hardhat run scripts/verify.js --network arcTestnet",
+    "test": "npx hardhat test",
+    "frontend": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.0"
+  }
+}
