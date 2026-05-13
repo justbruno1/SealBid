@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { Web3Provider } from "./context/Web3Context";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { AnimatedBackground } from "./components/layout/AnimatedBackground";
 import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
 import { Home } from "./pages/Home";
@@ -14,30 +15,34 @@ function AppShell() {
   const { isDark } = useTheme();
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300
-      ${isDark
-        ? "bg-dark-bg text-slate-100"
-        : "bg-light-bg text-slate-800"
-      }`}
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 relative
+      ${isDark ? "bg-dark-bg text-slate-100" : "bg-light-bg text-slate-800"}`}
     >
-      <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/"               element={<Home />} />
-          <Route path="/explore"        element={<Explore />} />
-          <Route path="/create"         element={<CreateAuction />} />
-          <Route path="/auction/:address" element={<AuctionPage />} />
-          <Route path="/my-bids"        element={<MyBids />} />
-          <Route path="*" element={
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-              <p className="text-7xl font-black text-arc-400/20 mb-4">404</p>
-              <p className="text-slate-400 mb-6">Page not found.</p>
-              <a href="/" className="text-arc-400 hover:text-arc-300 text-sm transition-colors">← Go home</a>
-            </div>
-          } />
-        </Routes>
-      </main>
-      <Footer />
+      {/* Animated canvas sits behind everything */}
+      <AnimatedBackground />
+
+      {/* All content sits above the canvas */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/"                 element={<Home />} />
+            <Route path="/explore"          element={<Explore />} />
+            <Route path="/create"           element={<CreateAuction />} />
+            <Route path="/auction/:address" element={<AuctionPage />} />
+            <Route path="/my-bids"          element={<MyBids />} />
+            <Route path="*" element={
+              <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+                <p className="text-7xl font-black text-arc-400/20 mb-4">404</p>
+                <p className="text-slate-400 mb-6">Page not found.</p>
+                <a href="/" className="text-arc-400 hover:text-arc-300 text-sm transition-colors">← Go home</a>
+              </div>
+            } />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+
       <Toaster
         position="bottom-right"
         toastOptions={{

@@ -1,11 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="url(#grad)"/>
-  <path d="M10 22L16 10L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M12.5 18H19.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
   <defs>
-    <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#6366f1"/>
-      <stop offset="1" stop-color="#8b5cf6"/>
+    <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00d4c8"/>
+      <stop offset="100%" stop-color="#0080d4"/>
+    </linearGradient>
+    <linearGradient id="hexGrad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00c2b8"/>
+      <stop offset="100%" stop-color="#006b9f"/>
     </linearGradient>
   </defs>
+  <polygon points="60,4 108,30 108,82 60,108 12,82 12,30" fill="#050d1a" stroke="url(#hexGrad2)" stroke-width="2.5"/>
+  <polygon points="60,14 98,36 98,78 60,100 22,78 22,36" fill="url(#hexGrad)"/>
+  <polygon points="60,20 92,38 92,74 60,92 28,74 28,38" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <path d="M36 52 Q36 43 45 43 Q54 43 54 50 Q54 57 36 57 Q27 57 27 65 Q27 73 36 73 L54 73" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M62 43 L62 73" fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <path d="M62 43 Q76 43 76 51 Q76 58 62 58" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M62 58 Q78 58 78 65.5 Q78 73 62 73" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="60"  cy="4"   r="3" fill="#00c2b8" opacity="0.8"/>
+  <circle cx="108" cy="30"  r="3" fill="#00c2b8" opacity="0.5"/>
+  <circle cx="108" cy="82"  r="3" fill="#00c2b8" opacity="0.5"/>
+  <circle cx="60"  cy="108" r="3" fill="#00c2b8" opacity="0.8"/>
+  <circle cx="12"  cy="82"  r="3" fill="#00c2b8" opacity="0.5"/>
+  <circle cx="12"  cy="30"  r="3" fill="#00c2b8" opacity="0.5"/>
 </svg>
