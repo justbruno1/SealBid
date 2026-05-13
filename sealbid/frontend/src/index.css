@@ -3,54 +3,60 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
-  html {
-    scroll-behavior: smooth;
-  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  /* ── Default = dark mode (Arc deep navy) ── */
   body {
-    background-color: #0a0a0f;
-    color: #f1f5f9;
+    @apply bg-dark-bg text-slate-100;
     font-family: 'DM Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* ── Light mode body ── */
+  .light body, body.light {
+    @apply bg-light-bg text-slate-800;
+  }
+
+  /* Arc mesh gradient background overlay — dark */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(0,194,184,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,142,210,0.06) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 60% at 50% 50%, rgba(5,13,26,1) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Light mode — remove dark overlay */
+  html.light body::before {
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(0,194,184,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,142,210,0.06) 0%, transparent 55%);
   }
 
   /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #12121a;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #2a2a3d;
-    border-radius: 99px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3a3a55;
-  }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #0e3054; border-radius: 99px; }
+  html.light ::-webkit-scrollbar-thumb { background: #c8dff5; }
 
-  /* Number input — hide arrows */
+  /* Hide number arrows */
   input[type='number']::-webkit-inner-spin-button,
-  input[type='number']::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-  }
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
+  input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type='number'] { -moz-appearance: textfield; }
 
   /* Range slider */
-  input[type='range'] {
-    height: 4px;
-    cursor: pointer;
-  }
+  input[type='range'] { height: 4px; cursor: pointer; }
 
-  /* Select arrow color */
+  /* Select arrow */
   select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 16px;
@@ -61,15 +67,43 @@
 }
 
 @layer components {
+  /* ── Input field — dark ── */
   .input-field {
-    @apply bg-[#12121a] border border-[#2a2a3d] rounded-lg px-3 py-2.5 text-[#f1f5f9] text-sm placeholder:text-[#475569] focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-colors w-full;
+    @apply w-full rounded-lg px-3 py-2.5 text-sm
+           bg-dark-card border border-dark-border
+           text-slate-100 placeholder:text-slate-500
+           focus:outline-none focus:border-arc-400/60 focus:ring-1 focus:ring-arc-400/20
+           transition-colors;
   }
 
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  /* ── Input field — light ── */
+  html.light .input-field {
+    @apply bg-white border-light-border text-slate-800 placeholder:text-slate-400
+           focus:border-arc-400 focus:ring-arc-400/20;
   }
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
+
+  /* ── Card base ── */
+  .card {
+    @apply bg-dark-card border border-dark-border rounded-xl
+           transition-colors duration-200;
   }
+  html.light .card {
+    @apply bg-light-card border-light-border shadow-sm;
+  }
+
+  /* ── Arc teal button ── */
+  .btn-arc {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg
+           bg-arc-400 hover:bg-arc-500 text-white
+           px-4 py-2.5 text-sm transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-arc-400/40 focus:ring-offset-2
+           focus:ring-offset-dark-bg disabled:opacity-40 disabled:cursor-not-allowed
+           shadow-lg shadow-arc-400/20;
+  }
+  html.light .btn-arc {
+    @apply focus:ring-offset-light-bg;
+  }
+
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 }

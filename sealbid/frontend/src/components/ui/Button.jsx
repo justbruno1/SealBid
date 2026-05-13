@@ -1,36 +1,51 @@
 import { Loader2 } from "lucide-react";
 
 export function Button({
-  children,
-  variant = "primary",
-  size = "md",
-  loading = false,
-  disabled = false,
-  className = "",
-  onClick,
-  type = "button",
-  ...props
+  children, variant = "primary", size = "md",
+  loading = false, disabled = false,
+  className = "", onClick, type = "button", ...props
 }) {
   const base =
-    "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0a0f] disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 " +
+    "focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed";
 
   const variants = {
+    // Arc teal — main CTA
     primary:
-      "bg-indigo-500 hover:bg-indigo-400 text-white focus:ring-indigo-500 disabled:bg-indigo-500/40 disabled:text-white/50",
+      "bg-arc-400 hover:bg-arc-500 text-white shadow-lg shadow-arc-400/20 " +
+      "focus:ring-arc-400/50 focus:ring-offset-dark-bg " +
+      "disabled:bg-arc-400/30 disabled:text-white/50",
+
+    // Subtle filled secondary
     secondary:
-      "bg-[#2a2a3d] hover:bg-[#333350] text-[#f1f5f9] border border-[#3a3a55] focus:ring-[#2a2a3d] disabled:opacity-40",
+      "bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border " +
+      "hover:border-arc-400/30 focus:ring-arc-400/30 focus:ring-offset-dark-bg " +
+      "disabled:opacity-40 " +
+      // light mode override
+      "dark:bg-dark-card light:bg-white light:text-slate-700 light:border-light-border " +
+      "light:hover:border-arc-400/50 light:hover:bg-light-hover",
+
     ghost:
-      "bg-transparent hover:bg-white/5 text-[#94a3b8] hover:text-[#f1f5f9] focus:ring-white/10 disabled:opacity-40",
+      "bg-transparent hover:bg-dark-card text-slate-400 hover:text-slate-100 " +
+      "focus:ring-slate-500/30 focus:ring-offset-dark-bg disabled:opacity-40",
+
     danger:
-      "bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 focus:ring-red-500 disabled:opacity-40",
+      "bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 " +
+      "focus:ring-red-500/40 focus:ring-offset-dark-bg disabled:opacity-40",
+
     success:
-      "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 focus:ring-emerald-500 disabled:opacity-40",
+      "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 " +
+      "focus:ring-emerald-500/40 focus:ring-offset-dark-bg disabled:opacity-40",
+
+    // Arc gradient — hero CTA
     gradient:
-      "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/25 focus:ring-indigo-500 disabled:opacity-40",
+      "bg-gradient-to-r from-arc-400 to-arc-600 hover:from-arc-300 hover:to-arc-500 " +
+      "text-white shadow-lg shadow-arc-400/25 " +
+      "focus:ring-arc-400/50 focus:ring-offset-dark-bg disabled:opacity-40",
   };
 
   const sizes = {
-    sm: "px-3 py-1.5 text-sm",
+    sm: "px-3 py-1.5 text-xs",
     md: "px-4 py-2.5 text-sm",
     lg: "px-6 py-3 text-base",
     xl: "px-8 py-4 text-lg",
@@ -44,7 +59,7 @@ export function Button({
       className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
-      {loading && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
+      {loading && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
       {children}
     </button>
   );
