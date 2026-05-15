@@ -1,32 +1,46 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Lock, Unlock, Trophy, ArrowRight, ExternalLink } from "lucide-react";
+import { ethers } from "ethers";
 import { AuctionGrid } from "../components/auction/AuctionGrid";
-import { useFactory } from "../hooks/useFactory";
-import { useWeb3 } from "../context/Web3Context";
 import { useTheme } from "../context/ThemeContext";
+import { FACTORY_ADDRESS, FACTORY_ABI, AUCTION_ABI } from "../utils/constants";
+
+function getFallbackProvider() {
+  const rpc = import.meta.env.VITE_ARC_RPC_URL || "https://rpc.testnet.arc.network";
+  return new ethers.JsonRpcProvider(rpc);
+}
 
 export function Home() {
-  const { getAuctions } = useFactory();
-  const { provider } = useWeb3();
   const { isDark } = useTheme();
   const [recentAddresses, setRecentAddresses] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [loadingAuctions, setLoadingAuctions] = useState(true);
 
+  // Load auctions directly — no dependency on wallet provider at all
   useEffect(() => {
-    if (!provider) return;
     (async () => {
+      setLoadingAuctions(true);
       try {
-        const all = await getAuctions();
+        if (!FACTORY_ADDRESS) return;
+        const prov = getFallbackProvider();
+        const factory = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, prov);
+        const all = await factory.getAuctions();
         setTotalCount(all.length);
         setRecentAddresses([...all].reverse().slice(0, 6));
-      } catch {}
+      } catch (err) {
+        console.error("Home fetch error:", err);
+      } finally {
+        setLoadingAuctions(false);
+      }
     })();
-  }, [provider]);
+  }, []);
 
-  const cardBg   = isDark ? "bg-dark-card border-dark-border" : "bg-white border-light-border shadow-sm";
-  const mutedText = isDark ? "text-slate-400" : "text-slate-500";
-  const bodyText  = isDark ? "text-slate-100" : "text-slate-900";
+  const bodyText  = isDark ? "text-white"      : "text-slate-900";
+  const mutedText = isDark ? "text-slate-300"  : "text-slate-600";
+  const cardBg    = isDark
+    ? "bg-white/5 border-white/10 hover:border-arc-400/40"
+    : "bg-white/60 border-blue-200/60 hover:border-arc-400/50 shadow-sm";
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -36,7 +50,7 @@ export function Home() {
         <div className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs border
           ${isDark
             ? "bg-arc-400/5 border-arc-400/20 text-arc-300"
-            : "bg-arc-400/10 border-arc-400/30 text-arc-600"}`}>
+            : "bg-white/50 border-blue-300/50 text-arc-600"}`}>
           <div className="w-1.5 h-1.5 rounded-full bg-arc-400 animate-pulse" />
           Live on Arc Testnet · Get USDC at{" "}
           <a href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer"
@@ -48,12 +62,6 @@ export function Home() {
 
       {/* Hero */}
       <section className="text-center py-20 relative">
-        {/* Decorative glow */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden>
-          <div className={`w-96 h-96 rounded-full blur-3xl opacity-10
-            ${isDark ? "bg-arc-400" : "bg-arc-300"}`} />
-        </div>
-
         <h1 className={`text-5xl sm:text-6xl font-bold mb-4 tracking-tight leading-tight ${bodyText}`}>
           Sealed.{" "}
           <span className="text-arc-400">Fair.</span>{" "}
@@ -72,8 +80,8 @@ export function Home() {
           <Link to="/create">
             <button className={`inline-flex items-center gap-2 px-6 py-3 text-base rounded-xl border font-medium transition-all
               ${isDark
-                ? "border-dark-border text-slate-200 hover:border-arc-400/40 hover:bg-dark-card"
-                : "border-light-border text-slate-700 hover:border-arc-400/50 hover:bg-light-hover"}`}>
+                ? "border-white/20 text-white hover:border-arc-400/50 hover:bg-white/5"
+                : "border-blue-200 text-slate-700 hover:border-arc-400/50 hover:bg-white/60"}`}>
               Create Auction
             </button>
           </Link>
@@ -88,8 +96,8 @@ export function Home() {
             { label: "Active Now",     value: recentAddresses.length },
             { label: "Network",        value: "Arc Testnet" },
           ].map(({ label, value }) => (
-            <div key={label} className={`rounded-xl p-4 text-center border ${cardBg}`}>
-              <p className={`text-2xl font-bold ${isDark ? "text-arc-400" : "text-arc-500"}`}>{value}</p>
+            <div key={label} className={`rounded-xl p-4 text-center border transition-colors ${cardBg}`}>
+              <p className="text-2xl font-bold text-arc-400">{value}</p>
               <p className={`text-xs mt-1 ${mutedText}`}>{label}</p>
             </div>
           ))}
@@ -105,17 +113,15 @@ export function Home() {
             { icon: Unlock, step: "02", title: "Reveal",  color: "blue",    desc: "After bidding closes, upload your bid receipt to reveal your amount. The contract verifies it matches your hash." },
             { icon: Trophy, step: "03", title: "Settle",  color: "emerald", desc: "The highest valid revealed bid wins. USDC transfers to the seller automatically. Losers get full refunds." },
           ].map(({ icon: Icon, step, title, desc, color }) => (
-            <div key={step}
-              className={`rounded-xl p-6 relative overflow-hidden group border transition-all duration-200 ${cardBg}
-                hover:border-arc-400/30`}>
+            <div key={step} className={`rounded-xl p-6 relative overflow-hidden group border transition-all duration-200 ${cardBg}`}>
               <div className={`absolute top-4 right-4 text-5xl font-black select-none transition-colors
-                ${isDark ? "text-dark-border group-hover:text-dark-hover" : "text-light-border group-hover:text-slate-200"}`}>
+                ${isDark ? "text-white/5 group-hover:text-white/10" : "text-slate-100 group-hover:text-slate-200"}`}>
                 {step}
               </div>
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
-                color === "arc"     ? "bg-arc-400/10 text-arc-400" :
-                color === "blue"   ? "bg-blue-500/10 text-blue-400" :
-                                     "bg-emerald-500/10 text-emerald-400"
+                color === "arc"     ? "bg-arc-400/15 text-arc-400" :
+                color === "blue"   ? "bg-blue-500/15 text-blue-400" :
+                                     "bg-emerald-500/15 text-emerald-400"
               }`}>
                 <Icon size={20} />
               </div>
@@ -135,7 +141,11 @@ export function Home() {
             View all <ArrowRight size={14} />
           </Link>
         </div>
-        <AuctionGrid addresses={recentAddresses} emptyMessage="No auctions yet — be the first to create one." />
+        <AuctionGrid
+          addresses={recentAddresses}
+          emptyMessage="No auctions yet — be the first to create one."
+          loading={loadingAuctions}
+        />
       </section>
     </div>
   );
