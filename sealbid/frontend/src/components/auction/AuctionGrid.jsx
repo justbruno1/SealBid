@@ -1,18 +1,17 @@
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
-import { useWeb3 } from "../../context/Web3Context";
 import { AuctionCard } from "./AuctionCard";
 import { AUCTION_ABI } from "../../utils/constants";
 import { Loader2, Gavel } from "lucide-react";
 import { Link } from "react-router-dom";
 
-function getFallbackProvider() {
+// Always use direct RPC — no wallet dependency
+function getProvider() {
   const rpc = import.meta.env.VITE_ARC_RPC_URL || "https://rpc.testnet.arc.network";
   return new ethers.JsonRpcProvider(rpc);
 }
 
 export function AuctionGrid({ addresses, emptyMessage = "No auctions found.", loading: externalLoading }) {
-  const { provider } = useWeb3();
   const [infos, setInfos] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -22,8 +21,7 @@ export function AuctionGrid({ addresses, emptyMessage = "No auctions found.", lo
       return;
     }
     setLoading(true);
-    // Use wallet provider if available, otherwise fall back to public RPC
-    const prov = provider || getFallbackProvider();
+    const prov = getProvider();
     try {
       const results = await Promise.allSettled(
         addresses.map(async (addr) => {
@@ -56,11 +54,14 @@ export function AuctionGrid({ addresses, emptyMessage = "No auctions found.", lo
         if (r.status === "fulfilled") newInfos[r.value.addr] = r.value.info;
       }
       setInfos(newInfos);
+    } catch (err) {
+      console.error("AuctionGrid fetch error:", err);
     } finally {
       setLoading(false);
     }
-  }, [provider, addresses]);
+  }, [JSON.stringify(addresses)]);
 
+  // Fire immediately when addresses change — no wallet needed
   useEffect(() => {
     fetchInfos();
   }, [fetchInfos]);
@@ -82,8 +83,7 @@ export function AuctionGrid({ addresses, emptyMessage = "No auctions found.", lo
           <Gavel size={24} className="text-slate-500" />
         </div>
         <p className="text-slate-400 text-sm mb-4">{emptyMessage}</p>
-        <Link to="/create"
-          className="text-arc-400 hover:text-arc-300 text-sm font-medium transition-colors">
+        <Link to="/create" className="text-arc-400 hover:text-arc-300 text-sm font-medium transition-colors">
           Create the first auction →
         </Link>
       </div>
