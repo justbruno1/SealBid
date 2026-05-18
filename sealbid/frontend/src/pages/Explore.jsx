@@ -106,7 +106,7 @@ export function Explore() {
     if (category !== "All") list = list.filter((a) => infos[a].category === category);
     if (status !== "All")   list = list.filter((a) => infos[a].state === STATUS_MAP[status]);
 
-    list.sort((a, b) => {
+    return [...list].sort((a, b) => {
       if (sort === "Newest")      return infos[b].createdAt - infos[a].createdAt;
       if (sort === "Oldest")      return infos[a].createdAt - infos[b].createdAt;
       if (sort === "Most Bids")   return infos[b].commitCount - infos[a].commitCount;
